@@ -12,8 +12,7 @@
 
     - name: Install K3s (lightweight Kubernetes)
       shell: curl -sfL https://get.k3s.io | sh -
-      args:
-        warn: false
+
 
     - name: Wait for K3s to be ready
       shell: "k3s kubectl get nodes"
