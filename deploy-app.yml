@@ -1,0 +1,15 @@
+- hosts: droplet
+  become: yes
+  tasks:
+    - name: Copy Kubernetes manifests to remote
+      copy:
+        src: app-k8s/
+        dest: /root/app-k8s/
+        mode: 0644
+        remote_src: no
+
+    - name: Apply Deployment
+      shell: "KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl apply -f /root/app-k8s/deployment.yml"
+
+    - name: Apply Service
+      shell: "KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl apply -f /root/app-k8s/service.yml"      
