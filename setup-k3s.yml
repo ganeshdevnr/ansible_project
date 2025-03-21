@@ -1,0 +1,29 @@
+- hosts: droplet
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install curl
+      apt:
+        name: curl
+        state: present
+
+    - name: Install K3s (lightweight Kubernetes)
+      shell: curl -sfL https://get.k3s.io | sh -
+      args:
+        warn: false
+
+    - name: Wait for K3s to be ready
+      shell: "k3s kubectl get nodes"
+      register: result
+      retries: 10
+      delay: 5
+      until: result.rc == 0
+
+    - name: Copy kubeconfig to host
+      fetch:
+        src: /etc/rancher/k3s/k3s.yaml
+        dest: ./kubeconfig
+        flat: yes
