@@ -14,8 +14,7 @@ spec:
     spec:
       containers:
         - name: node-app
-          image: devopsngr/my-node-app:v2.0
-          imagePullPolicy: Always
+          image: devopsngr/my-node-app:v3.0
           ports:
             - containerPort: 3000
           volumeMounts:
