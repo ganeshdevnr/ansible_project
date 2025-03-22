@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: node-app
-          image: devopsngr/my-node-app:v1.0
+          image: devopsngr/my-node-app:v2.0
           ports:
             - containerPort: 3000
           volumeMounts:

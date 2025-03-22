@@ -8,6 +8,15 @@
         mode: 0644
         remote_src: no
 
+    - name: Delete existing Deployment
+      shell: "KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl delete deployment node-app --ignore-not-found"
+
+    - name: Delete existing Service
+      shell: "KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl delete service node-app --ignore-not-found"
+
+    - name: Delete existing ConfigMap
+      shell: "KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl delete configmap app-config --ignore-not-found"
+
     - name: Apply ConfigMap
       shell: "KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl apply -f /root/app-k8s/config.yml"
 
