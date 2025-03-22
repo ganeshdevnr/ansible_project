@@ -8,8 +8,11 @@
         mode: 0644
         remote_src: no
 
+    - name: Apply ConfigMap
+      shell: "KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl apply -f /root/app-k8s/config.yml"
+
     - name: Apply Deployment
       shell: "KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl apply -f /root/app-k8s/deployment.yml"
 
     - name: Apply Service
-      shell: "KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl apply -f /root/app-k8s/service.yml"      
+      shell: "KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl apply -f /root/app-k8s/service.yml"
