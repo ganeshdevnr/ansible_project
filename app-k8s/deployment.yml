@@ -14,13 +14,16 @@ spec:
     spec:
       containers:
         - name: node-app
-          image: devopsngr/my-node-app:v3.0
+          image: devopsngr/my-node-app:v5
           ports:
             - containerPort: 3000
           volumeMounts:
             - name: env-volume
               mountPath: /app/.env
               subPath: .env
+          envFrom:
+            - configMapRef:
+                name: db-config
       volumes:
         - name: env-volume
           configMap:

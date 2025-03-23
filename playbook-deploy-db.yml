@@ -1,0 +1,23 @@
+- hosts: droplet
+  tasks:
+    - name: Copy Kubernetes manifests to remote
+      copy:
+        src: postgres/
+        dest: /root/postgres/
+        mode: 0644
+        remote_src: no
+
+    - name: Apply PersistentVolume
+      shell: KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl apply -f /root/postgres/pv.yml
+
+    - name: Apply PersistentVolumeClaim
+      shell: KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl apply -f /root/postgres/pvc.yml
+
+    - name: Apply ConfigMap
+      shell: KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl apply -f /root/postgres/config.yml
+
+    - name: Apply Postgres Service
+      shell: KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl apply -f /root/postgres/service.yml
+
+    - name: Apply Postgres Deployment
+      shell: KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl apply -f /root/postgres/deployment.yml
