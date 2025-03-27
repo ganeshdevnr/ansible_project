@@ -12,19 +12,34 @@ spec:
       labels:
         app: node-app
     spec:
+      initContainers:
+        - name: git-clone
+          image: alpine/git
+          command: ["sh", "-c", "git clone https://github.com/ganeshdevnr/nodejs_health_app.git /app"]
+          volumeMounts:
+            - name: app-code
+              mountPath: /app
+
       containers:
         - name: node-app
-          image: devopsngr/my-node-app:v5
+          image: node:18
+          workingDir: /app/app
+          command: ["sh", "-c", "npm install && npm run start"]
           ports:
             - containerPort: 3000
           volumeMounts:
+            - name: app-code
+              mountPath: /app
             - name: env-volume
               mountPath: /app/.env
               subPath: .env
           envFrom:
             - configMapRef:
                 name: db-config
+
       volumes:
+        - name: app-code
+          emptyDir: {}
         - name: env-volume
           configMap:
             name: app-config

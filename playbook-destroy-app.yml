@@ -1,0 +1,25 @@
+- hosts: droplet
+  become: yes
+  tasks:
+    - name: Delete Ingress
+      shell: "KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl delete ingress node-app-ingress --ignore-not-found"
+
+    - name: Delete Deployment
+      shell: "KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl delete deployment node-app --ignore-not-found"
+
+    - name: Delete Service
+      shell: "KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl delete service node-app-service --ignore-not-found"
+
+    - name: Delete ConfigMap
+      shell: "KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl delete configmap app-config --ignore-not-found"
+
+    - name: Uninstall Ingress Controller Helm release
+      shell: "helm uninstall nginx-ingress-controller -n my-ingress-release || true"
+
+    - name: Delete Ingress namespace
+      shell: "KUBECONFIG=/etc/rancher/k3s/k3s.yaml kubectl delete namespace my-ingress-release --ignore-not-found"
+
+    - name: Remove app folder from droplet
+      file:
+        path: /root/app-k8s
+        state: absent

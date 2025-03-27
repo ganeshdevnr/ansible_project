@@ -1,5 +1,8 @@
 - hosts: droplet
   become: yes
+  vars:
+    droplet_ip: "{{ ansible_host }}"  # automatically uses the IP from your inventory
+
   tasks:
     - name: Update apt cache
       apt:
@@ -20,8 +23,39 @@
       delay: 5
       until: result.rc == 0
 
-    - name: Copy kubeconfig to host
-      fetch:
-        src: /etc/rancher/k3s/k3s.yaml
-        dest: ./resources/kubeconfig
-        flat: yes
+    - name: Update kubeconfig with droplet IP
+      replace:
+        path: /etc/rancher/k3s/k3s.yaml
+        regexp: 'https://127.0.0.1:6443'
+        replace: "https://{{ droplet_ip }}:6443"
+
+    - name: Export kubeconfig path for this session
+      lineinfile:
+        path: /root/.bashrc
+        line: 'export KUBECONFIG=/etc/rancher/k3s/k3s.yaml'
+        insertafter: EOF
+
+    - name: Install Helm
+      shell: |
+        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+      args:
+        creates: /usr/local/bin/helm
+
+    - name: Add ingress-nginx Helm repo
+      shell: |
+        helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+        helm repo update
+
+    - name: Install ingress-nginx controller via Helm
+      shell: |
+        KUBECONFIG=/etc/rancher/k3s/k3s.yaml helm install nginx-ingress-controller ingress-nginx/ingress-nginx \
+          --namespace my-ingress-release \
+          --create-namespace \
+          --set controller.service.type=NodePort \
+          --set controller.service.nodePorts.http=32080 \
+          --set controller.service.nodePorts.https=32443
+      register: helm_result
+      retries: 5
+      delay: 10
+      until: helm_result.rc == 0
+

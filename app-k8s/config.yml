@@ -5,9 +5,9 @@ metadata:
 data:
   .env: |
     ENVIRONMENT=PRODUCTION
-    DB_HOST: postgres-service
-    DB_PORT: 5432
-    DB_USER: appuser
-    DB_PASSWORD: apppass
-    DB_NAME: appdb
+    DB_HOST=postgres-service
+    DB_PORT=5432
+    DB_USER=appuser
+    DB_PASSWORD=apppass
+    DB_NAME=appdb
 
